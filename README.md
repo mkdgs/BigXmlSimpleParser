@@ -6,7 +6,7 @@ The easy way for parsing big Xml file with PHP
 
 use:
 
-```
+```php
 
 defening your file and a element name.
 These elements will Treated  has a "line" of data by your own defined processhandler.
