@@ -38,11 +38,12 @@
 */
 
 class BigXmlSimpleParser {
+
     protected $_file = "";
     protected $_parser = null;
     protected $_current = null;
 
-    public function __construct($file, $lineElementName='',$lineHandler=null) {
+    public function __construct($file, $lineElementName = '', $lineHandler = null) {
         $this->_file = $file;
         $this->_parser = xml_parser_create("UTF-8");
         xml_set_object($this->_parser, $this);
@@ -51,16 +52,27 @@ class BigXmlSimpleParser {
         $this->lineCounter = 0;
         $this->lineElementName = $lineElementName;
         $this->lineHandler = $lineHandler;
+        $this->endHandler  = null;
     }
 
-    public function setHandler($lineHandler) {
+    public function setLineHandler($lineHandler) {
         $this->lineHandler = $lineHandler;
-    }    
+    }
+
+    public function setEndHandler($endHandler) {
+        $this->endHandler = $endHandler;
+    }
     
-    protected function process($line) {   
+    protected function process($line) {
         $this->lineCounter++;
         call_user_func($this->lineHandler, $line, $this);
     }
+    
+    protected function endHandler() {
+        if ( $this->endHandler ) {
+            call_user_func($this->endHandler, $line, $this);
+        }
+    } 
 
     protected function addElement($name, $attr) {
         $el = new \stdClass();
@@ -70,42 +82,46 @@ class BigXmlSimpleParser {
         $el->child = array();
         $el->parent = ( $this->_current ) ? $this->_current : null;
         $this->_current = $el;
-        
-        if ( $el->parent ) {
+
+        if ($el->parent) {
             $el->parent->child[] = $el;
         }
     }
 
     public function startTag($parser, $name, $attr) {
-        if ($this->_current || ( $name == $this->lineElementName ) ) {
+        if ($this->_current || ( $name == $this->lineElementName )) {
             $this->addElement($name, $attr);
-        }       
+        }
     }
 
-    public function endTag($parser, $name) {   
-        if ( !$this->_current ) return;            
+    public function endTag($parser, $name) {
+        if (!$this->_current)
+            return;
         if ($name == $this->lineElementName && ( $this->_current->parent == null )) {
             $this->process($this->_current);
             $this->_current = null;
-        }
-        else {
+        } else {
             $this->_current = $this->_current->parent;
-        }        
+        }
     }
 
-    public function characterData($parser, $data) {        
-        if ( $this->_current ) $this->_current->data .= trim($data);
+    public function characterData($parser, $data) {
+        if ($this->_current)
+            $this->_current->data .= trim($data);
     }
 
     public function parse() {
         $fh = fopen($this->_file, "r");
         if (!$fh) {
-            throw new \Exception('can\'t open file:'.$this->file);
+            throw new \Exception('can\'t open file:' . $this->file);
         }
 
         while (!feof($fh)) {
             $data = fread($fh, 4096);
             xml_parse($this->_parser, $data, feof($fh));
         }
+        
+        $this->endHandler($this);
+        xml_parser_free($this->_parser);
     }
 }
