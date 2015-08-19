@@ -1,8 +1,10 @@
 # BigXmlSimpleParser
-The easy way for parsing big Xml file with PHP
 
+Big Xml Simple Parser the easy way for parsing big Xml file with PHP
+- based on SAX Xml parser (http://php.net/manual/fr/function.xml-parse.php)
 - no memory bloat 
-- can handle nested level
+- can handle nested element 
+
 
 use:
 
