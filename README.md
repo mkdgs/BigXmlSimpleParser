@@ -8,10 +8,9 @@ use:
 
 ```php
 
-defening your file and a element name.
-These elements will Treated  has a "line" of data by your own defined processhandler.
-
+// defening your file and a element name.
 $parser = new BigXmlSimpleParser(__DIR__ "/data.xml", 'ROW');
+// These elements will Treated  has a "line" of data by your own defined processhandler.
 $parser->setHandler(function($line, $BigXmlSimpleParser) {
   echo '<pre>
   echo 'line number: '.$BigXmlSimpleParser->lineCounter;  
