@@ -15,7 +15,10 @@ $parser = new BigXmlSimpleParser(__DIR__ "/data.xml", 'ROW');
 // These elements will Treated  has a "line" of data by your own defined processhandler.
 $parser->setLineHandler(function($line, $BigXmlSimpleParser) {
   echo '<pre>
-  echo 'line number: '.$BigXmlSimpleParser->lineCounter;  
+  echo 'line number: '.$BigXmlSimpleParser->lineCounter."\r\n";  
+  echo 'name       : '.$line->child[1]->data."\r\n"; 
+  echo 'surname    : '.$line->child[2]->data."\r\n"; 
+  
   print_r($line);
   echo '</pre>;
 });
@@ -28,8 +31,8 @@ on:
 <data>
   <row>
     <ID_ARTISTE>10</ID_ARTISTE>
-    <VA_NOM>john</VA_NOM>
-    <VA_PRENOM>doe</VA_PRENOM>
+    <VA_NOM>doe</VA_NOM>
+    <VA_PRENOM>john</VA_PRENOM>
   </row>
   <row><ID_ARTISTE>11</ID_ARTISTE><VA_NOM>jane</VA_NOM><VA_PRENOM>doe</VA_PRENOM></row>
   <row><ID_ARTISTE>12</ID_ARTISTE><VA_NOM>foo</VA_NOM><VA_PRENOM>bar</VA_PRENOM></row>
@@ -38,6 +41,9 @@ on:
 will return:
 
 line number: 1
+name       : doe
+surname    : john
+
 stdClass Object
 (
     [name] => ROW
@@ -55,13 +61,13 @@ stdClass Object
             [1] => stdClass Object
                     [name] => VA_NOM
                     [attribute] => Array
-                    [data] => john
+                    [data] => doe
                     [child] => Array
                     [parent] => stdClass Object *RECURSION*
            [2] => stdClass Object
                     [name] => VA_PRENOM
                     [attribute] => Array
-                    [data] => doe
+                    [data] => john
                     [child] => Array
                     [parent] => stdClass Object *RECURSION*
 .......
