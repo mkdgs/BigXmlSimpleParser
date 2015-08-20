@@ -1,6 +1,8 @@
 # BigXmlSimpleParser
 
-Big Xml Simple Parser, the easy way for parsing very large Xml file with PHP
+Big Xml Simple Parser, the easy way for parsing very large XML file with PHP
+
+this class slices your XML file by the element you have defined and lets you process each subpart of your xml
 - based on SAX Xml parser (http://php.net/manual/fr/function.xml-parse.php)
 - no memory bloat 
 - can handle nested element 
@@ -12,15 +14,14 @@ use:
 
 // defening your file and a element name.
 $parser = new BigXmlSimpleParser(__DIR__ "/data.xml", 'ROW');
-// These elements will Treated  has a "line" of data by your own defined processhandler.
+// These elements will sliced and treated has a "line" of data by your own defined processhandler.
 $parser->setLineHandler(function($line, $BigXmlSimpleParser) {
-  echo '<pre>
-  echo 'line number: '.$BigXmlSimpleParser->lineCounter."\r\n";  
-  echo 'name       : '.$line->child[1]->data."\r\n"; 
-  echo 'surname    : '.$line->child[2]->data."\r\n"; 
-  
+  echo '<pre>';
+  echo 'line number: ' . $BigXmlSimpleParser->lineCounter . "\r\n";
+  echo 'name : ' . $line->child[1]->data . "\r\n";
+  echo 'surname : ' . $line->child[2]->data . "\r\n";
   print_r($line);
-  echo '</pre>;
+  echo '</pre>';
 });
 
 $parser->parse();
