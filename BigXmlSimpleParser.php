@@ -43,16 +43,19 @@ class BigXmlSimpleParser {
     protected $_parser = null;
     protected $_current = null;
 
-    public function __construct($file, $lineElementName = '', $lineHandler = null) {
+    public function __construct($file, $lineElementName = '', $lineHandler = null, $encoding = 'UTF-8') {
         $this->_file = $file;
+        // XML_OPTION_TARGET_ENCODING ISO-8859-1, US-ASCII OR UTF-8.
         $this->_parser = xml_parser_create("UTF-8");
         xml_set_object($this->_parser, $this);
         xml_set_element_handler($this->_parser, "startTag", "endTag");
         xml_set_character_data_handler($this->_parser, "characterData");
+        xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, 0);
+
         $this->lineCounter = 0;
         $this->lineElementName = $lineElementName;
         $this->lineHandler = $lineHandler;
-        $this->endHandler  = null;
+        $this->endHandler = null;
     }
 
     public function setLineHandler($lineHandler) {
@@ -62,17 +65,17 @@ class BigXmlSimpleParser {
     public function setEndHandler($endHandler) {
         $this->endHandler = $endHandler;
     }
-    
+
     protected function process($line) {
         $this->lineCounter++;
         call_user_func($this->lineHandler, $line, $this);
     }
-    
+
     protected function endHandler() {
-        if ( $this->endHandler ) {
-            call_user_func($this->endHandler, $line, $this);
+        if ($this->endHandler) {
+            call_user_func($this->endHandler, $this);
         }
-    } 
+    }
 
     protected function addElement($name, $attr) {
         $el = new \stdClass();
@@ -120,8 +123,8 @@ class BigXmlSimpleParser {
             $data = fread($fh, 4096);
             xml_parse($this->_parser, $data, feof($fh));
         }
-        
-        $this->endHandler($this);
+
+        $this->endHandler();
         xml_parser_free($this->_parser);
     }
 }
