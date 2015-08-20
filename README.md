@@ -12,14 +12,19 @@ use:
 
 ```php
 
-// defening your file and a element name.
+// defening your file and a element name <row>
 $parser = new BigXmlSimpleParser(__DIR__ "/data.xml", 'ROW');
-// These elements will sliced and treated has a "line" of data by your own defined processhandler.
+// each xml tag <row> will sliced and treated has a "line" of data by your own defined processhandler.
 $parser->setLineHandler(function($line, $BigXmlSimpleParser) {
   echo '<pre>';
+  echo 'element content'. "\r\n";
   echo 'line number: ' . $BigXmlSimpleParser->lineCounter . "\r\n";
   echo 'name : ' . $line->child[1]->data . "\r\n";
   echo 'surname : ' . $line->child[2]->data . "\r\n";
+  // if you want all attributes (array)
+  // echo 'attribute : ' . print_r($line->attribute, true). "\r\n";
+  // if you want all children elements (array of element)
+  // echo 'child : ' . print_r($line->child, true). "\r\n";
   print_r($line);
   echo '</pre>';
 });
@@ -41,6 +46,7 @@ on:
 
 will return:
 
+element content
 line number: 1
 name       : doe
 surname    : john
